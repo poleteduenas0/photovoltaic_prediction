@@ -1,7 +1,0 @@
-This is a placeholder file for your project's data.
-
-You should structure your data here according to your application's needs. Common practices include:
-
-- Organizing raw data files (e.g., CSV, JSON) in a `raw` subfolder.
-- Storing processed data files in a `processed` subfolder.
-- Keeping any scripts for data processing in a `scripts` subfolder.

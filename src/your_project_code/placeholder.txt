@@ -1,5 +1,0 @@
-This is a placeholder file for your project's main application code.
-
-- Place all source code for your app in this folder.
-- Consider creating a `tools` (or similar) folder for utility scripts and helper functions.
-- Refer to the repository's `docs` folder for documentation and the `tests` folder for testing examples and guidance.
