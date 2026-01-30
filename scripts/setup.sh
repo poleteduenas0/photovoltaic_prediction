@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 # -----------------------------------------------------------------------------
-# setup.sh - Project setup script for Python projects
-#
-# This script:
-#   - Checks for Python 3.11+ and exits if not found.
-#   - Creates a virtual environment in .venv if it doesn't exist.
-#   - Activates the virtual environment.
-#   - Upgrades pip and wheel.
-#   - Installs dependencies from requirements.txt if present.
-#   - Installs the project in editable mode if pyproject.toml is present.
-#   - Prints instructions for activating the environment and running tests.
+# setup.sh - Project setup script con UV
 # -----------------------------------------------------------------------------
 set -euo pipefail
 
@@ -18,56 +9,39 @@ PYTHON_MIN=3.11
 
 echo "[setup] Project: $PROJECT_NAME"
 
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "Python3 not found. Install Python $PYTHON_MIN+ first." >&2
-  exit 1
+# Verificar que UV está instalado
+if ! command -v uv >/dev/null 2>&1; then
+  echo "UV no está instalado. Instalando UV..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-PY_VER=$(python3 - <<'PY'
-import sys
-print(f"{sys.version_info.major}.{sys.version_info.minor}")
-PY
-)
+echo "[setup] UV version: $(uv --version)"
 
-REQ_MAJOR=${PY_VER%%.*}
-REQ_MINOR=${PY_VER#*.}
-
-if [ "$REQ_MAJOR" -lt 3 ] || { [ "$REQ_MAJOR" -eq 3 ] && [ "$REQ_MINOR" -lt 11 ]; }; then
-  echo "Python $PYTHON_MIN+ required (found $PY_VER)" >&2
-  exit 1
+# Crear venv con UV si no existe
+if [ ! -d ".venv" ]; then
+  echo "[setup] Creando entorno virtual con UV..."
+  uv venv --python 3.11
 fi
 
-if [ ! -d .venv ]; then
-  echo "[setup] Creating virtual environment (.venv)"
-  python3 -m venv .venv
-fi
-
-# shellcheck disable=SC1091
+# Activar el entorno
 if [ -f ".venv/bin/activate" ]; then
   source .venv/bin/activate
 elif [ -f ".venv/Scripts/activate" ]; then
   source .venv/Scripts/activate
-else
-  echo "Could not find the virtual environment activation script (.venv/bin/activate or .venv/Scripts/activate)." >&2
-  exit 1
 fi
 
-python -m pip install --upgrade pip wheel
-if [ -f requirements.txt ]; then
-  echo "[setup] Installing dependencies from requirements.txt"
-  pip install -r requirements.txt
-fi
+echo "[setup] Instalando dependencias..."
+# Sincronizar todas las dependencias definidas en pyproject.toml
+uv sync
 
-if [ -f pyproject.toml ]; then
-  echo "[setup] Installing project in editable mode"
-  pip install -e .
-fi
+# Instalar el proyecto en modo editable
+echo "[setup] Instalando proyecto en modo editable..."
+uv pip install -e .
 
-if [ -f ".venv/bin/activate" ]; then
-  echo "[setup] Done. Activate with: source .venv/bin/activate"
-elif [ -f ".venv/Scripts/activate" ]; then
-  echo "[setup] Done. Activate with: source .venv/Scripts/activate"
-else
-  echo "[setup] Done. Could not find activation script."
-fi
-echo "[setup] Run tests: pytest -q"
+echo ""
+echo "[setup] ✅ Instalación completada"
+echo "[setup] Activar entorno: source .venv/bin/activate (Linux/Mac)"
+echo "[setup]                  .venv\\Scripts\\activate (Windows)"
+echo "[setup] Ejecutar tests: pytest"
+echo "[setup] Ver dependencias: uv pip list"

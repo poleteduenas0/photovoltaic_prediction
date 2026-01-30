@@ -1,53 +1,120 @@
 ###############################################
 # pyproject.toml
-# Central configuration for build system (PEP 518) and project metadata (PEP 621).
-# Keep lean; extend only when needed (lint, type check, coverage, etc.).
+# Configuración centralizada con UV como gestor de dependencias
 ###############################################
 
 [build-system]
-# Build backend & requirement enabling PEP 621 metadata parsing.
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-# Distribution / package name (used by pip install). Change when cloning for a real project.
-name = "agml-template"
-# Semantic version; keep 0.0.0 for template baseline.
-version = "0.0.0"
-# Short summary of the project.
-description = "Template project"
-# List of authors. Add emails if desired: { name = "Alimak ML", email = "ml@example.com" }
-authors = [{name = "Alimak ML"}]
-# Long description file (displayed on package indexes if published).
-readme = "README.md"
-# Minimum supported Python version. Raise only when using newer features that justify it.
+name = "photovoltaic-prediction"
+version = "1.0.0"
+description = "Sistema de predicción de excedente fotovoltaico usando LSTM y ARIMA"
+authors = [{name = "Pablo Dueñas Fernández"}]
+readme = "README copy.md"
 requires-python = ">=3.11"
-# License; for internal/private code a simple text notice is fine.
 license = {text = "Proprietary"}
 
-# Add runtime dependencies later if needed:
-# dependencies = [
-#   "requests>=2.32",
-#   "pydantic>=2",
-# ]
+# Dependencias principales del proyecto
+dependencies = [
+    "numpy>=2.1.3",
+    "pandas>=2.2.3",
+    "matplotlib>=3.10.1",
+    "seaborn>=0.13.2",
+    "scikit-learn>=1.6.1",
+    "tensorflow>=2.19.0",
+    "psycopg2-binary>=2.9.10",
+    "sqlalchemy>=2.0.40",
+    "python-dotenv>=1.1.0",
+    "requests>=2.32.3",
+    "streamlit>=1.42.0",
+    "plotly>=6.0.1",
+    "statsmodels>=0.14.4",
+]
 
-# Optional extras example (uncomment to use):
-# [project.optional-dependencies]
-# dev = ["pytest", "ruff", "mypy"]
+[project.optional-dependencies]
+# Dependencias de desarrollo
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+# Dependencias para notebooks y análisis
+analysis = [
+    "jupyter>=1.1.1",
+    "ipykernel>=6.29.5",
+    "notebook>=7.3.2",
+]
 
 [tool.setuptools.packages.find]
-# Use src/ layout to avoid accidental import of local modules without install.
 where = ["src"]
 
-# Future tool config examples (uncomment when adding tools):
-# [tool.pytest.ini_options]
-# addopts = "-q"
-# testpaths = ["tests"]
+# Configuración de UV
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.4.1",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.8.0",
+]
 
-# [tool.ruff]
-# line-length = 100
-# target-version = "py311"
+# Configuración de Ruff (linter y formatter)
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [
+    ".venv",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    "build",
+    "dist",
+]
 
-# [tool.mypy]
-# python_version = "3.11"
-# strict = true
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (ya lo maneja line-length)
+    "B008",  # function calls in argument defaults
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# Configuración de pytest
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+# Configuración de mypy (type checking)
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = [
+    "venv",
+    ".venv",
+    "tests",
+]
