@@ -1,0 +1,53 @@
+###############################################
+# pyproject.toml
+# Central configuration for build system (PEP 518) and project metadata (PEP 621).
+# Keep lean; extend only when needed (lint, type check, coverage, etc.).
+###############################################
+
+[build-system]
+# Build backend & requirement enabling PEP 621 metadata parsing.
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Distribution / package name (used by pip install). Change when cloning for a real project.
+name = "agml-template"
+# Semantic version; keep 0.0.0 for template baseline.
+version = "0.0.0"
+# Short summary of the project.
+description = "Template project"
+# List of authors. Add emails if desired: { name = "Alimak ML", email = "ml@example.com" }
+authors = [{name = "Alimak ML"}]
+# Long description file (displayed on package indexes if published).
+readme = "README.md"
+# Minimum supported Python version. Raise only when using newer features that justify it.
+requires-python = ">=3.11"
+# License; for internal/private code a simple text notice is fine.
+license = {text = "Proprietary"}
+
+# Add runtime dependencies later if needed:
+# dependencies = [
+#   "requests>=2.32",
+#   "pydantic>=2",
+# ]
+
+# Optional extras example (uncomment to use):
+# [project.optional-dependencies]
+# dev = ["pytest", "ruff", "mypy"]
+
+[tool.setuptools.packages.find]
+# Use src/ layout to avoid accidental import of local modules without install.
+where = ["src"]
+
+# Future tool config examples (uncomment when adding tools):
+# [tool.pytest.ini_options]
+# addopts = "-q"
+# testpaths = ["tests"]
+
+# [tool.ruff]
+# line-length = 100
+# target-version = "py311"
+
+# [tool.mypy]
+# python_version = "3.11"
+# strict = true
